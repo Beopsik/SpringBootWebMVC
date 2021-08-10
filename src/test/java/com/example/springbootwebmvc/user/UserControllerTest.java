@@ -4,9 +4,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -22,5 +24,18 @@ public class UserControllerTest {
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello"));
+    }
+
+    @Test
+    public void createUser_JSON() throws Exception{
+        String userJson="{\"username\":\"beobsik\", \"password\":\"123\"}";
+
+        mockMvc.perform(post("/users/create")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .content(userJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is(equalTo("beobsik"))))
+                .andExpect(jsonPath("$.password", is(equalTo("123"))));
     }
 }
